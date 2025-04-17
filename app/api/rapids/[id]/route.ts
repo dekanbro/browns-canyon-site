@@ -1,8 +1,18 @@
 import { NextResponse } from "next/server"
 import { rapids, conditionUpdates } from "@/lib/data"
+import { NextRequest } from "next/server"
 
-export async function GET(request: Request, { params }: { params: { id: string } }) {
-  const id = params.id
+type RouteContext = {
+  params: {
+    id: string
+  }
+}
+
+export async function GET(
+  request: NextRequest,
+  context: RouteContext
+) {
+  const { id } = await context.params
 
   // Find the rapid by ID
   const rapid = rapids.find((r) => r.id === id)
@@ -21,8 +31,11 @@ export async function GET(request: Request, { params }: { params: { id: string }
   })
 }
 
-export async function POST(request: Request, { params }: { params: { id: string } }) {
-  const id = params.id
+export async function POST(
+  request: NextRequest,
+  context: RouteContext
+) {
+  const { id } = await context.params
 
   // Check if the rapid exists
   const rapid = rapids.find((r) => r.id === id)

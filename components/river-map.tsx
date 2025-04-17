@@ -53,65 +53,61 @@ export default function RiverMap({ rapids, onRapidClick }: RiverMapProps) {
 
   return (
     <div className="relative w-full h-full">
-      <div className="relative w-full h-full overflow-y-auto">
-        {/* Map image */}
-        <div className="relative w-[1000px] h-[1500px] translate-x-[-35%] translate-y-[0%]">
-          <Image
-            src="/images/browns-canyon-map.png"
-            alt="Brown's Canyon Topographic Map"
-            fill
-            className="object-cover"
-            priority
-            sizes="1000px"
-          />
-        </div>
-
+      {/* Map image with rapids markers */}
+      <div className="absolute inset-0">
+        <Image
+          src="/images/browns-canyon-map.png"
+          alt="Brown's Canyon Topographic Map"
+          fill
+          className="object-cover"
+          priority
+          sizes="100vw"
+        />
+        
         {/* Rapids markers */}
-        <div className="absolute inset-0 w-[1000px] h-[1500px] translate-x-[-35%] translate-y-[0%]">
-          {rapids.map((rapid) => (
-            <button
-              key={rapid.id}
-              className="absolute transform -translate-x-1/2 -translate-y-1/2 group z-10"
-              style={{
-                left: `${rapid.position.x}%`,
-                top: `${rapid.position.y}%`,
-              }}
-              onClick={() => onRapidClick(rapid)}
-              onMouseEnter={() => setHoveredRapid(rapid.id)}
-              onMouseLeave={() => setHoveredRapid(null)}
-              aria-label={`${rapid.name} Rapid, Class ${rapid.class}`}
-            >
-              <div className="flex flex-col items-center">
-                <div
-                  className={`
-                    w-6 h-6 md:w-8 md:h-8 rounded-full flex items-center justify-center
-                    ${
-                      rapid.class.includes("IV")
-                        ? "bg-[#ad2e24]"
-                        : rapid.class.includes("III")
-                          ? "bg-[#8b5e3c]"
-                          : "bg-[#4c837b]"
-                    }
-                    text-white shadow-md transition-transform duration-200
-                    ${hoveredRapid === rapid.id ? "scale-125" : ""}
-                    group-hover:scale-110 group-focus:scale-110
-                  `}
-                >
-                  <MapPin size={rapid.class.includes("IV") ? 18 : 16} />
-                </div>
-                <div
-                  className={`
-                    absolute left-full ml-2 top-1/2 -translate-y-1/2 bg-white/90 backdrop-blur-sm px-2 py-1 rounded shadow-sm text-xs font-bold 
-                    whitespace-nowrap transition-opacity duration-200
-                    ${hoveredRapid === rapid.id ? "opacity-100" : "opacity-0 group-hover:opacity-100 group-focus:opacity-100"}
-                  `}
-                >
-                  {rapid.name} (Class {rapid.class})
-                </div>
+        {rapids.map((rapid) => (
+          <button
+            key={rapid.id}
+            className="absolute transform -translate-x-1/2 -translate-y-1/2 group z-10"
+            style={{
+              left: `${rapid.position.x}%`,
+              top: `${rapid.position.y}%`,
+            }}
+            onClick={() => onRapidClick(rapid)}
+            onMouseEnter={() => setHoveredRapid(rapid.id)}
+            onMouseLeave={() => setHoveredRapid(null)}
+            aria-label={`${rapid.name} Rapid, Class ${rapid.class}`}
+          >
+            <div className="flex flex-col items-center">
+              <div
+                className={`
+                  w-6 h-6 md:w-8 md:h-8 rounded-full flex items-center justify-center
+                  ${
+                    rapid.class.includes("IV")
+                      ? "bg-[#ad2e24]"
+                      : rapid.class.includes("III")
+                        ? "bg-[#8b5e3c]"
+                        : "bg-[#4c837b]"
+                  }
+                  text-white shadow-md transition-transform duration-200
+                  ${hoveredRapid === rapid.id ? "scale-125" : ""}
+                  group-hover:scale-110 group-focus:scale-110
+                `}
+              >
+                <MapPin size={rapid.class.includes("IV") ? 18 : 16} />
               </div>
-            </button>
-          ))}
-        </div>
+              <div
+                className={`
+                  absolute left-full ml-2 top-1/2 -translate-y-1/2 bg-white/90 backdrop-blur-sm px-2 py-1 rounded shadow-sm text-xs font-bold 
+                  whitespace-nowrap transition-opacity duration-200
+                  ${hoveredRapid === rapid.id ? "opacity-100" : "opacity-0 group-hover:opacity-100 group-focus:opacity-100"}
+                `}
+              >
+                {rapid.name} (Class {rapid.class})
+              </div>
+            </div>
+          </button>
+        ))}
       </div>
 
       {/* Fixed Controls Container */}

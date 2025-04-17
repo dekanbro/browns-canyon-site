@@ -37,7 +37,7 @@ export default function NavigationMenu({
   }
 
   return (
-    <>
+    <div className="relative h-full flex flex-col">
       {/* Mobile menu button */}
       <div className="md:hidden fixed top-0 left-0 right-0 flex justify-between items-center p-4 z-50">
         <button onClick={toggleMobileMenu} className="bg-white/90 backdrop-blur-sm p-2 rounded-lg shadow-md text-[#3a2f1b] hover:text-[#8b5e3c] transition-colors">
@@ -101,19 +101,27 @@ export default function NavigationMenu({
       </div>
 
       {/* Content area */}
-      <div className={`flex-grow overflow-y-auto p-4 pt-16 md:pt-6 md:p-6 w-full ${activeSection === "map" ? "md:block hidden" : ""}`}>
-        {activeSection === "flow" && <RealTimeData />}
-        {activeSection === "stories" && <GuideStories />}
-        {activeSection === "calendar" && <LocalCalendar />}
-        {activeSection === "shop" && <SwagShop />}
+      <div className={`flex-grow ${activeSection === "map" ? "md:block hidden" : ""}`}>
+        {activeSection !== "map" && (
+          <div className="h-full overflow-y-auto pt-16 md:pt-6">
+            <div className="p-4 md:p-6">
+              {activeSection === "flow" && <RealTimeData />}
+              {activeSection === "stories" && <GuideStories />}
+              {activeSection === "calendar" && <LocalCalendar />}
+              {activeSection === "shop" && <SwagShop />}
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Map view */}
       {activeSection === "map" && (
-        <div className="fixed inset-0 pt-16 md:pt-0 z-30 md:static md:z-auto">
-          <RiverMap rapids={rapids} onRapidClick={onRapidClick} />
+        <div className="fixed inset-0 z-30 md:static md:z-auto">
+          <div className="h-full pt-16 md:pt-0">
+            <RiverMap rapids={rapids} onRapidClick={onRapidClick} />
+          </div>
         </div>
       )}
-    </>
+    </div>
   )
 }

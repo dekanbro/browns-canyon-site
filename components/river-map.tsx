@@ -118,7 +118,7 @@ export default function RiverMap({ rapids, onRapidClick }: RiverMapProps) {
       <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-[#e8d5b5] to-transparent h-48 pointer-events-none" />
 
       {/* Current Flow Display */}
-      <div className="absolute bottom-40 right-4 bg-white/90 p-4 md:p-8 rounded-lg shadow-lg z-10">
+      <div className="fixed md:absolute bottom-40 right-10 bg-white/90 p-4 md:p-8 rounded-lg shadow-lg z-10">
         <div className="text-center">
           <div className="text-sm md:text-lg text-gray-600 mb-1 md:mb-2">Current Flow</div>
           <div className="text-3xl md:text-7xl font-bold text-[#4c837b]">{flowData?.currentFlow || '--'}</div>
@@ -127,7 +127,7 @@ export default function RiverMap({ rapids, onRapidClick }: RiverMapProps) {
       </div>
 
       {/* Map legend */}
-      <div className="absolute bottom-4 right-4 bg-white/90 backdrop-blur-sm p-3 rounded-lg shadow-md text-sm">
+      <div className="fixed md:absolute bottom-4 right-10 bg-white/90 backdrop-blur-sm p-3 rounded-lg shadow-md text-sm">
         <h3 className="font-playfair font-bold mb-2">Legend</h3>
         <div className="flex items-center mb-1">
           <div className="w-4 h-4 rounded-full bg-[#4c837b] mr-2"></div>
@@ -144,7 +144,7 @@ export default function RiverMap({ rapids, onRapidClick }: RiverMapProps) {
       </div>
 
       {/* Google Earth button */}
-      <div className="absolute top-4 right-4 z-10">
+      <div className="fixed md:absolute top-4 right-10 z-10">
         <a
           href={generateAllRapidsGoogleEarthUrl(rapids)}
           target="_blank"

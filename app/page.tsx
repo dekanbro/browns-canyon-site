@@ -21,8 +21,28 @@ export default function Home() {
   const [rapids, setRapids] = useState<Rapid[]>([])
   const [selectedRapid, setSelectedRapid] = useState<Rapid | null>(null)
   const [isDrawerOpen, setIsDrawerOpen] = useState(false)
-  const [activeSection, setActiveSection] = useState<string>("flow")
+  const [activeSection, setActiveSection] = useState<string>("map")
   const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    // Set initial section based on screen size
+    const handleResize = () => {
+      if (window.innerWidth >= 768) { // md breakpoint
+        setActiveSection("flow")
+      } else {
+        setActiveSection("map")
+      }
+    }
+
+    // Set initial state
+    handleResize()
+
+    // Add listener for window resize
+    window.addEventListener('resize', handleResize)
+
+    // Cleanup
+    return () => window.removeEventListener('resize', handleResize)
+  }, [])
 
   useEffect(() => {
     // Fetch rapids data with coordinates from API
@@ -70,12 +90,17 @@ export default function Home() {
     >
       {/* Left side - Navigation and content */}
       <div className="w-full md:w-auto flex flex-col h-full border-r border-[#d9b382] min-w-[400px] flex-grow">
-        <div className="p-4 md:p-6 border-b border-[#d9b382]">
+        <div className="hidden md:block p-4 md:p-6 border-b border-[#d9b382]">
           <h1 className="font-playfair text-2xl md:text-3xl font-bold">Brown's Canyon</h1>
           <p className="font-source-serif text-sm md:text-base">Arkansas River, Colorado</p>
         </div>
 
-        <NavigationMenu activeSection={activeSection} setActiveSection={setActiveSection} />
+        <NavigationMenu 
+          activeSection={activeSection} 
+          setActiveSection={setActiveSection}
+          rapids={rapids}
+          onRapidClick={handleRapidClick}
+        />
       </div>
 
       {/* Right side - Map */}

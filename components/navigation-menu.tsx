@@ -6,18 +6,27 @@ import RealTimeData from "@/components/real-time-data"
 import LocalCalendar from "@/components/local-calendar"
 import GuideStories from "@/components/guide-stories"
 import SwagShop from "@/components/swag-shop"
+import RiverMap from "@/components/river-map"
+import type { Rapid } from "@/lib/types"
 
 interface NavigationMenuProps {
   activeSection: string
   setActiveSection: (section: string) => void
+  rapids: Rapid[]
+  onRapidClick: (rapid: Rapid) => void
 }
 
-export default function NavigationMenu({ activeSection, setActiveSection }: NavigationMenuProps) {
+export default function NavigationMenu({ 
+  activeSection, 
+  setActiveSection,
+  rapids,
+  onRapidClick
+}: NavigationMenuProps) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
 
   const menuItems = [
     { id: "flow", label: "River Flow", icon: <Droplet size={20} /> },
-    { id: "map", label: "Map", icon: <Map size={20} /> },
+    { id: "map", label: "Map", icon: <Map size={20} />, mobileOnly: true },
     { id: "stories", label: "Guide Stories", icon: <BookOpen size={20} /> },
     { id: "calendar", label: "Events", icon: <Calendar size={20} /> },
     { id: "shop", label: "Canyon Swag", icon: <ShoppingCart size={20} /> },
@@ -30,9 +39,8 @@ export default function NavigationMenu({ activeSection, setActiveSection }: Navi
   return (
     <>
       {/* Mobile menu button */}
-      <div className="md:hidden flex justify-between items-center p-4 border-b border-[#d9b382]">
-        <span className="font-playfair font-bold">{menuItems.find((item) => item.id === activeSection)?.label}</span>
-        <button onClick={toggleMobileMenu} className="text-[#3a2f1b] hover:text-[#8b5e3c] transition-colors">
+      <div className="md:hidden fixed top-0 left-0 right-0 flex justify-between items-center p-4 z-50">
+        <button onClick={toggleMobileMenu} className="bg-white/90 backdrop-blur-sm p-2 rounded-lg shadow-md text-[#3a2f1b] hover:text-[#8b5e3c] transition-colors">
           {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
         </button>
       </div>
@@ -40,54 +48,72 @@ export default function NavigationMenu({ activeSection, setActiveSection }: Navi
       {/* Navigation menu */}
       <div
         className={`
-        md:block w-full
-        ${isMobileMenuOpen ? "block" : "hidden"}
-        md:static absolute left-0 right-0 bg-[#f4e9d4] z-20
-      `}
+          md:block w-full
+          ${isMobileMenuOpen ? "block" : "hidden"}
+          fixed md:static top-16 left-4 right-4 md:left-0 md:right-0 bg-white/95 backdrop-blur-sm md:bg-[#f4e9d4] rounded-lg md:rounded-none shadow-lg md:shadow-none z-40
+        `}
       >
+        <div className="md:hidden p-4 border-b border-[#d9b382]">
+          <h2 className="font-playfair text-lg font-bold">Brown's Canyon</h2>
+          <p className="font-source-serif text-sm text-[#3a2f1b]/80">Arkansas River, Colorado</p>
+        </div>
         <nav className="border-b border-[#d9b382]">
           <ul>
             {menuItems.map((item) => (
-              <li key={item.id}>
-                <button
-                  onClick={() => {
-                    setActiveSection(item.id)
-                    setIsMobileMenuOpen(false)
-                  }}
-                  className={`
-                    w-full flex items-center px-6 py-3 text-left
-                    ${activeSection === item.id ? "bg-[#d9b382] bg-opacity-30 font-bold" : "hover:bg-[#d9b382] hover:bg-opacity-20"}
-                    transition-colors
-                  `}
-                >
-                  <span className="mr-3">{item.icon}</span>
-                  <span>{item.label}</span>
-                </button>
-              </li>
+              item.mobileOnly ? (
+                <li key={item.id} className="md:hidden">
+                  <button
+                    onClick={() => {
+                      setActiveSection(item.id)
+                      setIsMobileMenuOpen(false)
+                    }}
+                    className={`
+                      w-full flex items-center px-6 py-3 text-left
+                      ${activeSection === item.id ? "bg-[#d9b382] bg-opacity-30 font-bold" : "hover:bg-[#d9b382] hover:bg-opacity-20"}
+                      transition-colors
+                    `}
+                  >
+                    <span className="mr-3">{item.icon}</span>
+                    <span>{item.label}</span>
+                  </button>
+                </li>
+              ) : (
+                <li key={item.id}>
+                  <button
+                    onClick={() => {
+                      setActiveSection(item.id)
+                      setIsMobileMenuOpen(false)
+                    }}
+                    className={`
+                      w-full flex items-center px-6 py-3 text-left
+                      ${activeSection === item.id ? "bg-[#d9b382] bg-opacity-30 font-bold" : "hover:bg-[#d9b382] hover:bg-opacity-20"}
+                      transition-colors
+                    `}
+                  >
+                    <span className="mr-3">{item.icon}</span>
+                    <span>{item.label}</span>
+                  </button>
+                </li>
+              )
             ))}
           </ul>
         </nav>
       </div>
 
       {/* Content area */}
-      <div className="flex-grow overflow-y-auto p-4 md:p-6 w-full">
+      <div className={`flex-grow overflow-y-auto p-4 pt-16 md:pt-6 md:p-6 w-full ${activeSection === "map" ? "md:block hidden" : ""}`}>
         {activeSection === "flow" && <RealTimeData />}
         {activeSection === "stories" && <GuideStories />}
         {activeSection === "calendar" && <LocalCalendar />}
         {activeSection === "shop" && <SwagShop />}
-        {activeSection === "map" && (
-          <div className="h-full flex flex-col justify-center items-center text-center p-4">
-            <h2 className="font-playfair text-xl font-bold mb-2">Brown's Canyon Map</h2>
-            <p className="font-source-serif mb-4">Explore the rapids by clicking on the markers.</p>
-            <div className="bg-[#d9b382] bg-opacity-30 p-4 rounded-lg">
-              <p className="text-sm italic">
-                The Arkansas River flows through Brown's Canyon, offering some of Colorado's best whitewater rafting
-                experiences.
-              </p>
-            </div>
-          </div>
-        )}
       </div>
+
+      {/* Map view */}
+      {activeSection === "map" && (
+        <div className="fixed inset-0 pt-16 md:pt-0 z-30 md:static md:z-auto">
+          <RiverMap rapids={rapids} onRapidClick={onRapidClick} />
+        </div>
+      )}
     </>
   )
 }

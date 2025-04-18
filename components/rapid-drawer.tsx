@@ -28,11 +28,11 @@ export default function RapidDrawer({ rapid, isOpen, onClose }: RapidDrawerProps
     if (rapid && isOpen) {
       setLoading(true)
 
-      // Fetch the rapid details including updates
-      fetch(`/api/rapids/${rapid.id}`)
+      // Fetch conditions from our Airtable API
+      fetch(`/api/conditions/${rapid.id}`)
         .then((response) => {
           if (!response.ok) {
-            throw new Error("Failed to fetch rapid details")
+            throw new Error("Failed to fetch conditions")
           }
           return response.json()
         })
@@ -44,7 +44,7 @@ export default function RapidDrawer({ rapid, isOpen, onClose }: RapidDrawerProps
           }
         })
         .catch((error) => {
-          console.error("Error fetching rapid details:", error)
+          console.error("Error fetching conditions:", error)
           setUpdates([])
         })
         .finally(() => {
@@ -57,35 +57,42 @@ export default function RapidDrawer({ rapid, isOpen, onClose }: RapidDrawerProps
     e.preventDefault()
     if (!name.trim() || !updateMessage.trim() || !rapid) return
 
-    const newUpdate: ConditionUpdate = {
-      id: Date.now(),
-      name: name.trim(),
-      date: new Date().toISOString().split("T")[0],
-      message: updateMessage.trim(),
-    }
-
     setSubmitting(true)
 
     try {
-      // Submit the update to the API
-      const response = await fetch(`/api/rapids/${rapid.id}`, {
-        method: "POST",
+      // Submit to our new Airtable API endpoint
+      const response = await fetch('/api/conditions', {
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
         },
-        body: JSON.stringify(newUpdate),
+        body: JSON.stringify({
+          email: name.trim(),
+          notes: updateMessage.trim(),
+          rapid: rapid.id,
+          date: new Date().toISOString().split('T')[0]
+        }),
       })
 
       if (!response.ok) {
-        throw new Error("Failed to submit update")
+        const error = await response.json()
+        throw new Error(error.error || 'Failed to submit update')
       }
 
+      const result = await response.json()
+
       // Add the new update to the list
+      const newUpdate: ConditionUpdate = {
+        id: Date.now(),
+        name: name.trim(),
+        date: new Date().toISOString().split('T')[0],
+        message: updateMessage.trim(),
+      }
       setUpdates([newUpdate, ...updates])
-      setUpdateMessage("")
+      setUpdateMessage('')
     } catch (error) {
-      console.error("Error submitting update:", error)
-      alert("Failed to submit update. Please try again.")
+      console.error('Error submitting update:', error)
+      alert('Failed to submit update. Please try again.')
     } finally {
       setSubmitting(false)
     }

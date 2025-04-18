@@ -37,10 +37,14 @@ export default function NavigationMenu({
   }
 
   return (
-    <div className="relative h-full flex flex-col">
+    <div className="relative h-full flex flex-col max-h-screen">
       {/* Mobile menu button */}
-      <div className="md:hidden fixed top-0 left-0 right-0 flex justify-between items-center p-4 z-50">
-        <button onClick={toggleMobileMenu} className="bg-white/90 backdrop-blur-sm p-2 rounded-lg shadow-md text-[#3a2f1b] hover:text-[#8b5e3c] transition-colors">
+      <div className="md:hidden fixed top-4 left-4 z-50">
+        <button 
+          onClick={toggleMobileMenu} 
+          className="bg-white/90 backdrop-blur-sm p-2 rounded-lg shadow-md text-[#3a2f1b] hover:text-[#8b5e3c] transition-colors"
+          aria-label={isMobileMenuOpen ? "Close menu" : "Open menu"}
+        >
           {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
         </button>
       </div>
@@ -48,12 +52,13 @@ export default function NavigationMenu({
       {/* Navigation menu */}
       <div
         className={`
-          md:block w-full
+          md:block w-full flex-none
           ${isMobileMenuOpen ? "block" : "hidden"}
-          fixed md:static top-16 left-4 right-4 md:left-0 md:right-0 bg-white/95 backdrop-blur-sm md:bg-[#f4e9d4] rounded-lg md:rounded-none shadow-lg md:shadow-none z-40
+          fixed md:static top-0 left-0 right-0 bottom-0 md:left-0 md:right-0 bg-white/95 backdrop-blur-sm md:bg-[#f4e9d4] rounded-lg md:rounded-none shadow-lg md:shadow-none z-40
+          transition-all duration-300 ease-in-out
         `}
       >
-        <div className="md:hidden p-4 border-b border-[#d9b382]">
+        <div className="md:hidden p-4 pt-16 border-b border-[#d9b382] sticky top-0 bg-white/95 backdrop-blur-sm">
           <h2 className="font-playfair text-lg font-bold">Brown's Canyon</h2>
           <p className="font-source-serif text-sm text-[#3a2f1b]/80">Arkansas River, Colorado</p>
         </div>
@@ -101,9 +106,9 @@ export default function NavigationMenu({
       </div>
 
       {/* Content area */}
-      <div className={`flex-grow ${activeSection === "map" ? "md:block hidden" : ""}`}>
+      <div className="flex-1 min-h-0">
         {activeSection !== "map" && (
-          <div className="h-full overflow-y-auto pt-16 md:pt-6">
+          <div className="h-full overflow-y-auto pt-16 md:pt-6 [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-track]:bg-[#f4e9d4] [&::-webkit-scrollbar-thumb]:bg-[#d9b382] [&::-webkit-scrollbar-thumb:hover]:bg-[#8b5e3c]">
             <div className="p-4 md:p-6">
               {activeSection === "flow" && <RealTimeData />}
               {activeSection === "stories" && <GuideStories />}
@@ -114,11 +119,15 @@ export default function NavigationMenu({
         )}
       </div>
 
-      {/* Map view */}
+      {/* Map view for mobile only */}
       {activeSection === "map" && (
-        <div className="fixed inset-0 z-30 md:static md:z-auto">
-          <div className="h-full pt-16 md:pt-0">
-            <RiverMap rapids={rapids} onRapidClick={onRapidClick} />
+        <div className="fixed inset-0 z-30 md:hidden">
+          <div className="h-full pt-16">
+            <RiverMap 
+              rapids={rapids} 
+              onRapidClick={onRapidClick} 
+              onFlowClick={() => setActiveSection("flow")}
+            />
           </div>
         </div>
       )}

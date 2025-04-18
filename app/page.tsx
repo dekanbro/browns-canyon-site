@@ -86,7 +86,7 @@ export default function Home() {
 
   return (
     <main
-      className={`${playfair.variable} ${sourceSerif.variable} h-screen flex flex-col md:flex-row overflow-hidden bg-[#f4e9d4] text-[#3a2f1b]`}
+      className={`${playfair.variable} ${sourceSerif.variable} h-screen flex flex-col md:flex-row overflow-hidden bg-[#fdfaf6] text-[#3a2f1b]`}
     >
       {/* Left side - Navigation and content */}
       <div className="w-full md:w-auto flex flex-col h-full border-r border-[#d9b382] min-w-[400px] flex-grow">
@@ -103,17 +103,17 @@ export default function Home() {
         />
       </div>
 
-      {/* Right side - Map */}
-      <div className="relative w-[650px] h-full bg-[#e8d5b5] flex-shrink-0">
+      {/* Right side - Map (always shown on desktop, conditionally on mobile) */}
+      <div className={`relative w-[650px] h-full flex-shrink-0 ${activeSection !== "map" && "hidden md:block"}`}>
         {loading ? (
-          <div className="absolute inset-0 flex items-center justify-center bg-[#e8d5b5]">
+          <div className="absolute inset-0 flex items-center justify-center bg-[#fdfaf6]">
             <div className="text-center">
               <div className="w-12 h-12 border-4 border-[#8b5e3c] border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
               <p className="font-playfair">Loading map...</p>
             </div>
           </div>
         ) : (
-          <RiverMap rapids={rapids} onRapidClick={handleRapidClick} />
+          <RiverMap rapids={rapids} onRapidClick={handleRapidClick} onFlowClick={() => setActiveSection("flow")} />
         )}
       </div>
 

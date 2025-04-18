@@ -9,6 +9,7 @@ import { generateAllRapidsGoogleEarthUrl } from "@/lib/google-earth"
 interface RiverMapProps {
   rapids: Rapid[]
   onRapidClick: (rapid: Rapid) => void
+  onFlowClick?: () => void
 }
 
 interface FlowData {
@@ -27,7 +28,7 @@ interface FlowData {
   error?: string
 }
 
-export default function RiverMap({ rapids, onRapidClick }: RiverMapProps) {
+export default function RiverMap({ rapids, onRapidClick, onFlowClick }: RiverMapProps) {
   const [hoveredRapid, setHoveredRapid] = useState<string | null>(null)
   const [flowData, setFlowData] = useState<FlowData | null>(null)
   const [loading, setLoading] = useState(true)
@@ -114,7 +115,17 @@ export default function RiverMap({ rapids, onRapidClick }: RiverMapProps) {
       <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-[#e8d5b5] to-transparent h-48 pointer-events-none" />
 
       {/* Current Flow Display */}
-      <div className="fixed md:absolute bottom-40 right-10 bg-white/90 p-4 md:p-8 rounded-lg shadow-lg z-10">
+      <div 
+        className="fixed md:absolute bottom-40 right-10 bg-white/90 p-4 md:p-8 rounded-lg shadow-lg z-10 cursor-pointer hover:bg-white transition-colors"
+        onClick={onFlowClick}
+        role="button"
+        tabIndex={0}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            onFlowClick?.()
+          }
+        }}
+      >
         <div className="text-center">
           <div className="text-sm md:text-lg text-gray-600 mb-1 md:mb-2">Current Flow</div>
           <div className="text-3xl md:text-7xl font-bold text-[#4c837b]">{flowData?.currentFlow || '--'}</div>

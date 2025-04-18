@@ -5,8 +5,10 @@ import Image from "next/image"
 import { products } from "@/lib/data"
 import { ShoppingCart, ExternalLink } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import { useRouter } from "next/navigation"
 
 export default function SwagShop() {
+  const router = useRouter()
   const [selectedCategory, setSelectedCategory] = useState<string>("all")
   const [hoveredProduct, setHoveredProduct] = useState<number | null>(null)
 
@@ -22,28 +24,30 @@ export default function SwagShop() {
 
   return (
     <div>
-      <div className="flex justify-between items-center mb-4">
-        <h2 className="font-playfair text-xl font-bold">River Swag</h2>
-        <div className="flex items-center text-sm text-[#8b5e3c]">
-          <ShoppingCart size={16} className="mr-1" />
-          <span>Support Local</span>
+      <div className="mb-6">
+        <div className="flex justify-between items-center mb-4">
+          <h2 className="font-playfair text-xl font-bold">River Swag</h2>
+          <div className="flex items-center text-sm text-[#8b5e3c]">
+            <ShoppingCart size={16} className="mr-1" />
+            <span>Support Local</span>
+          </div>
         </div>
-      </div>
 
-      <div className="flex gap-2 mb-4 overflow-x-auto pb-2">
-        {categories.map((category) => (
-          <button
-            key={category.id}
-            className={`px-3 py-1 rounded-full text-sm font-bold whitespace-nowrap ${
-              selectedCategory === category.id
-                ? "bg-[#8b5e3c] text-white"
-                : "bg-[#f4e9d4] text-[#3a2f1b] hover:bg-[#d9b382]"
-            }`}
-            onClick={() => setSelectedCategory(category.id)}
-          >
-            {category.name}
-          </button>
-        ))}
+        <div className="flex gap-2 mb-4 overflow-x-auto pb-2">
+          {categories.map((category) => (
+            <button
+              key={category.id}
+              className={`px-3 py-1 rounded-full text-sm font-bold whitespace-nowrap ${
+                selectedCategory === category.id
+                  ? "bg-[#8b5e3c] text-white"
+                  : "bg-[#f4e9d4] text-[#3a2f1b] hover:bg-[#d9b382]"
+              }`}
+              onClick={() => setSelectedCategory(category.id)}
+            >
+              {category.name}
+            </button>
+          ))}
+        </div>
       </div>
 
       <div className="grid grid-cols-2 gap-3">
@@ -70,12 +74,10 @@ export default function SwagShop() {
                 variant="outline"
                 size="sm"
                 className="mt-2 w-full text-xs border-[#d9b382] hover:bg-[#f4e9d4] text-[#3a2f1b] flex items-center justify-center gap-1"
-                asChild
+                onClick={() => router.push(`/shop/${product.id}`)}
               >
-                <a href={`https://example.com/product/${product.id}`} target="_blank" rel="noopener noreferrer">
-                  <span>View Item</span>
-                  <ExternalLink size={12} />
-                </a>
+                <span>View Details</span>
+                <ExternalLink size={12} />
               </Button>
             </div>
           </div>
